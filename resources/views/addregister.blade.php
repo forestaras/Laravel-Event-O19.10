@@ -42,7 +42,5 @@
 
 <!-- ADD A PAGINATION -->
 
-
-    sad
   </div>
 @endsection
