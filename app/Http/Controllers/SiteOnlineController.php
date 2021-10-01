@@ -211,6 +211,7 @@ $x=0;
      		                 
      		                 
      		                 ];
+						
         $count_people=$count_people+1;
 
    	}
@@ -230,6 +231,25 @@ $x=0;
 
    return view('site.online.startlist', compact('event','seting','peoples','grups','clubs'));
    }
+
+
+
+    public function showpeople($name){
+	$seting=SetingController::seting();
+	$peopless = DB::table('mopcompetitor')->where('name',$name)->get();  
+	foreach ($peopless as $people) {
+		$event = DB::table('mopcompetition')->where('cid',$people->cid)->first();
+		$clas=DB::table('mopclass')->where('cid',$people->cid)->where('id',$people->cls)->first();
+		$peopleses = DB::table('mopcompetitor')->where('cid',$people->cid)->get(); 
+		$peoples[]=
+		['title'=>$event->name,
+		'name'=>$people->name,
+		'rezult'=>SiteOnlineController::formatTime($people->rt),
+		'clas'=>$clas->name];
+	}
+	
+    return view('site.online.people', compact('seting','peoples'));
+    }
 
 
 

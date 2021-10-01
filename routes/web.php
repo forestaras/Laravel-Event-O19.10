@@ -34,6 +34,8 @@ Route::post('/admin/registers', 'AdminCmsRegisterUsers@add')->name('homes');
 Route::get('/online/rezult/{id}', 'SiteOnlineController@showrezult')->name('online');
 Route::get('/online/startlist/{id}', 'SiteOnlineController@showstartlist')->name('startlist');
 Route::get('/online/split/{id}-{grup}', 'SiteOnlineController@showsplit')->name('split'); 
+Route::get('/online/showpeople/{name}', 'SiteOnlineController@showpeople')->name('showpeople'); 
+
 
 
 
