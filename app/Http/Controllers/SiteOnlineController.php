@@ -28,7 +28,7 @@ class SiteOnlineController extends \crocodicstudio\crudbooster\controllers\CBCon
 	$status=$people->stat;
     switch($status) {
      case 0: 
-      return "&ndash;"; //Unknown, running?
+      return " "; //Unknown, running?
     case 1:
       return "OK";
     case 20:
@@ -236,19 +236,40 @@ $x=0;
 
     public function showpeople($name){
 	$seting=SetingController::seting();
-	$peopless = DB::table('mopcompetitor')->where('name',$name)->get();  
+	$peopless = DB::table('mopcompetitor')->where('name',$name)->get(); 
+	 
 	foreach ($peopless as $people) {
+		
 		$event = DB::table('mopcompetition')->where('cid',$people->cid)->first();
-		$clas=DB::table('mopclass')->where('cid',$people->cid)->where('id',$people->cls)->first();
-		$peopleses = DB::table('mopcompetitor')->where('cid',$people->cid)->get(); 
-		$peoples[]=
+		$clas=DB::table('mopclass')->where('cid',$people->cid)->where('id',$people->cls)->first();//групи
+		$peopleses = DB::table('mopcompetitor')->where('cid',$people->cid)->where('cls',$people->cls)->get();//для ппрорахунку місця
+		$mistse=SiteOnlineController::mistse($people,$peopleses);//місце в старті
+		//
+		$pipl['name']=$people->name;
+		$club=DB::table('moporganization')->where('id',$people->org)->where('cid',$people->cid)->first();
+		if ($club->name) {
+			$pipl['club']=$club;
+		}
+		//дані про спортсмена
+
+		   	
+		
+
+
+		//Змагання спортсмена
+		$events[]=
 		['title'=>$event->name,
 		'name'=>$people->name,
-		'rezult'=>SiteOnlineController::formatTime($people->rt),
+		'club'=>$club->name,
+		'data'=>$event->date,
+		'rezult'=>SiteOnlineController::rez_stat($people),
+		'mistse'=>$mistse,
 		'clas'=>$clas->name];
+		//Змагання спортсмена
+
 	}
 	
-    return view('site.online.people', compact('seting','peoples'));
+    return view('site.online.people', compact('seting','events','pipl'));
     }
 
 
