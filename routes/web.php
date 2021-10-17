@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/admin/registerl', function () { 
+Route::get('/admin/registerl', function () {
     return view('site.register');
 });
 
@@ -31,11 +31,9 @@ Route::get('/autocomplete3', 'TestController@autocomplete3')->name('homes');
 Route::post('/admin/registers', 'AdminCmsRegisterUsers@add')->name('homes');
 // Route::get('/autocomplete2', 'TestController@index')->name('homes');/
 
-Route::get('/online/rezult/{id}', 'SiteOnlineController@showrezult')->name('online');
+
+Route::get('/online', 'SiteOnlineController@indexonline')->name('online');
+Route::get('/online/rezult/{id}', 'SiteOnlineController@showrezult')->name('rezult');
 Route::get('/online/startlist/{id}', 'SiteOnlineController@showstartlist')->name('startlist');
-Route::get('/online/split/{id}-{grup}', 'SiteOnlineController@showsplit')->name('split'); 
-Route::get('/online/showpeople/{name}', 'SiteOnlineController@showpeople')->name('showpeople'); 
-
-
-
-
+Route::get('/online/split/{id}', 'SiteOnlineController@showsplit')->name('split');
+Route::get('/online/showpeople/{name}', 'SiteOnlineController@showpeople')->name('showpeople');

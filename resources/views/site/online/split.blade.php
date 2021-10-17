@@ -1,18 +1,42 @@
 @extends('site.index')
 @section('content')
- <section id="portfolio" class="portfolio">
+<style>
+  #color1 {
+  background-color: #ea7a1f;
+  }
+  #color2 {
+  background-color: #1fea6d;
+  }
+  #color3 {
+  background-color: #1FA6EA;
+  }
+</style>
+ <section id="portfolio  pricing" class="portfolio  pricing">
       <div class="container" data-aos="fade-up">
-      	 <div class="section-title">
-          <h2>Стартові:{{$event->name}}</h2>
-          <p>Сторінка перегляду результатів змагань. Ви можете відсортувати за групами  або командами, скориставшись фільтром.</p>
+        <div class="jumbotron box featured row">
+          <div class="col-lg-10">
+            <h1>Спліти: {{ $event->name }}</h1>
+            <p>Дата змагань: {{ date_format(date_create($event->date), 'd.m.Y') }}<br>
+                Учасників: {{ $event->count_people }}<br>
+                Команд: {{ $event->count_club }}</p>
+            <p><a class="buy-btn" href="/online/startlist/{{ $event->cid }}?sort=grup"
+                    role="button">Стартлист</a>
+                <a class="buy-btn" href="/online/rezult/{{ $event->cid }}?sort=grup"
+                    role="button">Результати</a>
+                {{-- <a class="buy-btn" href="/online/split/{{ $event->cid }}?sort=grup" role="button">Спліти</a> --}}
+            </p>
+            {{-- <ul id="portfolio-flters" class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="100">
+                <li data-filter="" @if ($_GET['sort'] == 'grup' or !$_GET) class="filter-active" @endif><a href="?sort=grup">Групи</a></li>
+                <li data-filter="" @if ($_GET['sort'] == 'club' or !$_GET) class="filter-active" @endif><a href="?sort=club">Клуби</a></li>
+                <li data-filter="" @if ($_GET['sort'] == 'tsah' or !$_GET) class="filter-active"@endif><a href="?sort=tsah">Шахматка</a></li> --}}
+            </ul>
+          </div>
+          <div class="col-lg-2">
+            <a class="btn btn-primary btn-lg" href="#" OnClick="history.back();"role="button"><i class="fas fa-undo-alt"></i>Назад</a>
+          </div>
         </div>
 
-        <ul id="portfolio-flters" class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="100">
-          <li data-filter=""  @if($_GET['sort']=='grup'  or !$_GET) class="filter-active"@endif ><a href="?sort=grup">Групи</a></li>
-          <li data-filter=""  @if($_GET['sort']=='club' ) class="filter-active"@endif ><a href="?sort=club">Клуби</a></li>
-           <li data-filter=""  @if($_GET['sort']=='tsah' ) class="filter-active"@endif ><a href="?sort=tsah">Шахматка</a></li>
-          
-        </ul>
+        <h3>{{$grup}}</h3>
         <div class="row content">
             <div class="col-md-6">
 
@@ -20,43 +44,51 @@
 
         	
             </div>
-            <div class="col-md-6">
-            	<a href="/event/{{$event->id}}">Сторінка змагань</a>
-            </div>
+       
 
 
         </div>
-        <table class="table table-striped table-bordered">
+        @foreach($grupss as $grupa)
+        <a href="/online/split/{{$id}}?grup={{$grupa->name}}">{{$grupa->name}}</a>|
+        @endforeach
+        <table class="table table-striped table-bordered split">
           <tr>
+            <td>Місце</td>
             <td>Імя</td>
+            <td>Результат</td>
             @foreach($mopkp as $kp)<td>{{$kp->ctrl}}</td>@endforeach
             
             <td>Фініш</td>
+            <td>Результат</td>
+            <td>Імя</td>
+            
 
 
           </tr>
            @foreach($people_rezult as $people)
           <tr>  
-            <td>{{$people['name']}}</td>
+            <td>{{$people['mistse']}}</td>
+            <td><b>{{$people['name']}}</b><br>{{$people['club']}}</td>
+            <td><b>{{$people['result']}}</b><br>{{$people['vidst']}}</td>
             @foreach($people['split'] as $split)
-            <td><abbsss title="{{$split['time_vidst_rt']}}">{{$split['time']}} ({{$split['count_all']}})</abbsss> <br>
-            <abbsss title="{{$split['time_vidst_rt_peregon']}}">{{$split['time_peregon']}}({{$split['count_cp']}})</abbsss><br>
+            <td><abbsss id="color{{$split['count_all']}}"title="{{$split['time_vidst_rt']}}">{{$split['time']}} ({{$split['count_all']}})</abbsss> <br>
+            <abbsss id="color{{$split['count_cp']}}"title="{{$split['time_vidst_rt_peregon']}}">{{$split['time_peregon']}}({{$split['count_cp']}})</abbsss><br>
             
           </td>
             @endforeach
             <td>{{$people['finish']}}<br>
                 {{$people['rt_peregon']}}
-            </td>
+            </td>  
+          <td><b>{{$people['result']}}</b><br>{{$people['vidst']}}</td>
+          <td><b>{{$people['name']}}</b><br>{{$people['club']}}</td>
           </tr>
           @endforeach
+
         </table>
         
        
-        p
-        <?php
-        // print_r($peoples);
-        // print_r($mopkp);
-        ?>
+        
+
 
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -75,13 +107,15 @@ const data = {
   labels: labels,
   datasets: [
   @foreach($people_rezult as $people) 
+  @if($people['stat']==1)
   {
-    label: '{{$people['name']}}',
+    label: '{{$people['mistse']}}.{{$people['name']}}',
     backgroundColor: "{{$people['color']}}",
     borderColor: "{{$people['color']}}",
     data: [0,@foreach($people['split'] as $split) -{{$split['rttt']}},@endforeach],
 
   },
+  @endif
    @endforeach
    {
     label: 'СуперМен',
@@ -104,7 +138,7 @@ const config = {
       },
       title: {
         display: true,
-        text: 'Chart.js Horizontal Bar Chart'
+        text: 'Діаграма сплітів'
       }
     }
   }
@@ -127,6 +161,7 @@ module.exports = {
 </script>
 </canvas>
 </div>
+
 <!-- /.График -->
 
 
