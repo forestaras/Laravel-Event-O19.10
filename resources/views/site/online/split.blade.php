@@ -51,7 +51,7 @@
         @foreach($grupss as $grupa)
         <a href="/online/split/{{$id}}?grup={{$grupa->name}}">{{$grupa->name}}</a>|
         @endforeach
-        <table class="table table-striped table-bordered split">
+        <table  class="table table-striped table-bordered split">
           <tr>
             <td>Місце</td>
             <td>Імя</td>
@@ -71,10 +71,14 @@
             <td><b>{{$people['name']}}</b><br>{{$people['club']}}</td>
             <td><b>{{$people['result']}}</b><br>{{$people['vidst']}}</td>
             @foreach($people['split'] as $split)
+
+                
+           
             <td><abbsss id="color{{$split['count_all']}}"title="{{$split['time_vidst_rt']}}">{{$split['time']}} ({{$split['count_all']}})</abbsss> <br>
             <abbsss id="color{{$split['count_cp']}}"title="{{$split['time_vidst_rt_peregon']}}">{{$split['time_peregon']}}({{$split['count_cp']}})</abbsss><br>
             
           </td>
+
             @endforeach
             <td>{{$people['finish']}}<br>
                 {{$people['rt_peregon']}}

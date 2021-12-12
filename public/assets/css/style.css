@@ -1859,8 +1859,9 @@ section {
   width: 100%;
   overflow: scroll;
   overflow-x: scroll; /* Добавляем полосу прокрутки */
+  margin: 10px;
 
   height: 600px; /* Высота блока */
-  padding: 5px; /* Поля вокруг текста */
+  padding: 1px; /* Поля вокруг текста */
   white-space: nowrap; /* Запрещаем перенос строк */
 }

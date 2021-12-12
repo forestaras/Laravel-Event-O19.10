@@ -36,4 +36,9 @@ Route::get('/online', 'SiteOnlineController@indexonline')->name('online');
 Route::get('/online/rezult/{id}', 'SiteOnlineController@showrezult')->name('rezult');
 Route::get('/online/startlist/{id}', 'SiteOnlineController@showstartlist')->name('startlist');
 Route::get('/online/split/{id}', 'SiteOnlineController@showsplit')->name('split');
+Route::get('/online/showrezcom/{id}', 'SiteOnlineController@showrezcom')->name('showrezcom'); //Результти команди
 Route::get('/online/showpeople/{name}', 'SiteOnlineController@showpeople')->name('showpeople');
+
+
+Route::get('upload',['as' => 'upload_form', 'uses' => 'CSVController@getForm']);
+Route::post('upload',['as' => 'upload_file','uses' => 'CSVController@upload']);

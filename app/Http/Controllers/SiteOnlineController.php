@@ -13,50 +13,50 @@ use Illuminate\Support\Facades\Validator;
 class SiteOnlineController extends \crocodicstudio\crudbooster\controllers\CBController
 {
 	public function dataua($dataevent)
-    {
-        $m = date_format(date_create($dataevent), 'm');
-        $d = date_format(date_create($dataevent), 'd');
-        switch ($m) {
-            case '01':
-                $x = 'січ';
-                break;
-            case '02':
-                $x = 'лют';
-                break;
-            case '03':
-                $x = 'бер';
-                break;
-            case '04':
-                $x = 'кві';
-                break;
-            case '05':
-                $x = 'тра';
-                break;
-            case '06':
-                $x = 'чер';
-                break;
-            case '07':
-                $x = 'лип';
-                break;
-            case '08':
-                $x = 'сер';
-                break;
-            case '09':
-                $x = 'вер';
-                break;
-            case '10':
-                $x = 'жов';
-                break;
-            case '11':
-                $x = 'лис';
-                break;
-            case '12':
-                $x = 'гру';
-                break;
-        }
-        $data = $d . ' ' . $x;
-        return $data;
-    }
+	{
+		$m = date_format(date_create($dataevent), 'm');
+		$d = date_format(date_create($dataevent), 'd');
+		switch ($m) {
+			case '01':
+				$x = 'січ';
+				break;
+			case '02':
+				$x = 'лют';
+				break;
+			case '03':
+				$x = 'бер';
+				break;
+			case '04':
+				$x = 'кві';
+				break;
+			case '05':
+				$x = 'тра';
+				break;
+			case '06':
+				$x = 'чер';
+				break;
+			case '07':
+				$x = 'лип';
+				break;
+			case '08':
+				$x = 'сер';
+				break;
+			case '09':
+				$x = 'вер';
+				break;
+			case '10':
+				$x = 'жов';
+				break;
+			case '11':
+				$x = 'лис';
+				break;
+			case '12':
+				$x = 'гру';
+				break;
+		}
+		$data = $d . ' ' . $x;
+		return $data;
+	}
 
 	function grupsearh($grups, $people)
 	{ //Шукає рупу в базі даних з групами
@@ -357,17 +357,17 @@ class SiteOnlineController extends \crocodicstudio\crudbooster\controllers\CBCon
 
 
 	public function indexonline()
-    {
+	{
 		$yerstart = $_GET['yerastart'];
-        $mountstart = $_GET['datastart'];
-        $seting = SetingController::seting();
-        $events = DB::table('mopcompetition')->where('date', 'like', $yerstart . '%'.'-' . $mountstart . '%')->orderBy('date', 'desc')->get();
+		$mountstart = $_GET['datastart'];
+		$seting = SetingController::seting();
+		$events = DB::table('mopcompetition')->where('date', 'like', $yerstart . '%' . '-' . $mountstart . '%')->orderBy('date', 'desc')->get();
 		foreach ($events as $event) {
-            $event->date = SiteOnlineController::dataua($event->date);
-        }
-        
-        return view('site.online.table', compact('events', 'seting'));
-    }
+			$event->date = SiteOnlineController::dataua($event->date);
+		}
+
+		return view('site.online.table', compact('events', 'seting'));
+	}
 
 
 
@@ -463,9 +463,9 @@ class SiteOnlineController extends \crocodicstudio\crudbooster\controllers\CBCon
 
 	public function showsplit($id)
 	{
-		$grup=$_GET['grup'];
-		if(!$grup){
-			$grup=DB::table('mopclass')->where('cid', $id)->first()->name;
+		$grup = $_GET['grup'];
+		if (!$grup) {
+			$grup = DB::table('mopclass')->where('cid', $id)->first()->name;
 		}
 		$colors = ['#66ff33', '#3333ff', '#ffff00', '#ff5050', '#ff9900', '#9966ff', '#00ffcc', '#003399', '#009933', '#cc9900', '#66ff33', '#3333ff', '#ffff00', '#ff5050', '#ff9900', '#9966ff', '#00ffcc', '#003399', '#009933', '#cc9900'];
 		$seting = SetingController::seting();
@@ -473,7 +473,7 @@ class SiteOnlineController extends \crocodicstudio\crudbooster\controllers\CBCon
 		$event = DB::table('mopcompetition')->where('cid', $id)->first();
 		$clubs = DB::table('moporganization')->where('cid', $id)->get();
 		$grups = DB::table('mopclass')->where('cid', $id)->where('name', $grup)->first(); // виймаємо группу     
-$peopless = DB::table('mopcompetitor')->where('cid',$id)->where('cls',$grups->id)->get()->sortBy('rt')->sortBy('stat'); // виймаємо учасників
+		$peopless = DB::table('mopcompetitor')->where('cid', $id)->where('cls', $grups->id)->where('stat', '>', 0)->orderBy('stat', 'ASC')->orderBy('rt', 'ASC')->get(); // виймаємо учасників
 		// $kp=DB::table('mopcompetitor')->where('cid',$id)->where('cls',$grups->id)->get();
 		$mopkp = DB::table('mopclasscontrol')->where('cid', $id)->where('id', $grups->id)->get()->sortBy('ord'); // виймаєкомо КП для групи
 
@@ -484,15 +484,20 @@ $peopless = DB::table('mopcompetitor')->where('cid',$id)->where('cls',$grups->id
 		foreach ($peopless as $p) {
 			$split = $mopradio->where('id', $p->id);
 			$popsplit = 0;
-			foreach ($split as $s) {
-				$splitperegon = $s->rt - $popsplit;
-				$allsplit[] = [
-					'ctrl' => $s->ctrl, //записує в масив номер КП
-					'rt' => $s->rt,
-					'id' => $s->id,
-					'rt_peregon' => $splitperegon
-				];
-				$popsplit = $s->rt;
+			foreach ($mopkp as $kp) {
+				foreach ($split as $s) {
+					if ($kp->ctrl == $s->ctrl) {
+						$splitperegon2 = $s->rt - $popsplit;
+						$allsplit[] = [
+							'ctrl' => $s->ctrl, //записує в масив номер КП
+							'rt' => $s->rt,
+							'id' => $s->id,
+							'rt_peregon' => $splitperegon2
+						];
+						$popsplit = $s->rt;
+					}
+					// echo $splitperegon2;
+				}
 			}
 		}
 
@@ -582,63 +587,77 @@ $peopless = DB::table('mopcompetitor')->where('cid',$id)->where('cls',$grups->id
 			$x = 0;
 			$z = 0;
 			$rttt = 0;
+			$ctrl = 0;
+			foreach ($mopkp as $kp) {
 
-			foreach ($splitradio as $mopsplit) { //форичитьть всі спліти	
-				$ctrl = 0;
-				foreach ($mopkp as $kp) {
-					if ($kp->ord == $x) {
-						$ctrl = $kp->ctrl;
+
+				foreach ($splitradio as $mopsplit) { //форичитьть всі спліти УЧАСНИКА	
+					if ($kp->ctrl == $mopsplit->ctrl) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+						$splitperegon = $mopsplit->rt - $popsplit;
+						$z = min_rt_peregon($allsplit, $mopsplit->ctrl, $splitperegon) + $z;
+						$rttt = $rttt + $z;
+						$splitpeople[] = [
+							'ctrl' => $mopsplit->ctrl, //записує в масив номер КП
+							'rt' => $mopsplit->rt,
+							'rttt' => $rttt / 10,
+
+
+
+							'id' => $mopsplit->id,
+							'count_all' => count_all($allsplit, $mopsplit),
+							'rt_peregon' => $splitperegon,
+							'count_cp' => count_kp($allsplit, $mopsplit, $splitperegon),
+							'time' => SiteOnlineController::formatTime($mopsplit->rt),
+							'time_peregon' => SiteOnlineController::formatTime($splitperegon),
+							'vidst_rt' => min_rt($allsplit, $mopsplit->ctrl, $mopsplit->rt),
+							'vidst_rt_peregon' => min_rt_peregon($allsplit, $mopsplit->ctrl, $splitperegon),
+							'time_vidst_rt_peregon' => SiteOnlineController::formatVids(min_rt_peregon($allsplit, $mopsplit->ctrl, $splitperegon), 1),
+							'time_vidst_rt' => SiteOnlineController::formatVids(min_rt($allsplit, $mopsplit->ctrl, $mopsplit->rt), 1)
+						]; //записує в масив результат на КП
+						$popsplit = $mopsplit->rt;
+						$z = min_rt_peregon($allsplit, $mopsplit->ctrl, $splitperegon);
+						echo $splitperegon;
+
+
+						$x = $x + 1;
 					}
+					// elseif ($kp->ctrl != $mopsplit->ctrl) {
+					// 		$splitpeople[] = [
+					// 			'ctrl' => 0, //записує в масив номер КП
+					// 			'rt' => 0,
+					// 			'id' => 0,
+					// 			'count_all' => 0,
+					// 			'rt_peregon' => 0,
+					// 			'count_cp' => 0,
+					// 			'time' => 0,
+					// 			'time_peregon' => 0
+					// 		];
+					// 		// $x = $x + 1;
+					// 		$ctrl = 0;
+					// 		// echo $mopsplit->ctrl;
+					// 	}
 				}
-
-
-
-				if ($ctrl != $mopsplit->ctrl) {
-					$splitpeople[] = [
-						'ctrl' => 0, //записує в масив номер КП
-						'rt' => 0,
-						'id' => 0,
-						'count_all' => 0,
-						'rt_peregon' => 0,
-						'count_cp' => 0,
-						'time' => 0,
-						'time_peregon' => 0
-					];
-					$x = $x + 1;
-					$ctrl = 0;
-				}
-
-
-
-
-				$splitperegon = $mopsplit->rt - $popsplit;
-				$z = min_rt_peregon($allsplit, $mopsplit->ctrl, $splitperegon) + $z;
-				$rttt = $rttt + $z;
-				$splitpeople[] = [
-					'ctrl' => $mopsplit->ctrl, //записує в масив номер КП
-					'rt' => $mopsplit->rt,
-					'rttt' => $rttt / 10,
-
-
-
-					'id' => $mopsplit->id,
-					'count_all' => count_all($allsplit, $mopsplit),
-					'rt_peregon' => $splitperegon,
-					'count_cp' => count_kp($allsplit, $mopsplit, $splitperegon),
-					'time' => SiteOnlineController::formatTime($mopsplit->rt),
-					'time_peregon' => SiteOnlineController::formatTime($splitperegon),
-					'vidst_rt' => min_rt($allsplit, $mopsplit->ctrl, $mopsplit->rt),
-					'vidst_rt_peregon' => min_rt_peregon($allsplit, $mopsplit->ctrl, $splitperegon),
-					'time_vidst_rt_peregon' => SiteOnlineController::formatVids(min_rt_peregon($allsplit, $mopsplit->ctrl, $splitperegon), 1),
-					'time_vidst_rt' => SiteOnlineController::formatVids(min_rt($allsplit, $mopsplit->ctrl, $mopsplit->rt), 1)
-				]; //записує в масив результат на КП
-				$popsplit = $mopsplit->rt;
-				$z = min_rt_peregon($allsplit, $mopsplit->ctrl, $splitperegon);
-
-
-				$x = $x + 1;
 			}
-			
+
+
+
 
 
 
@@ -701,9 +720,50 @@ $peopless = DB::table('mopcompetitor')->where('cid',$id)->where('cls',$grups->id
 
 
 
-print_r($allsplit);
-// print_r($mopsplit);
-// print_r($splitperegon);
-		return view('site.online.split', compact('event', 'seting', 'people_rezult', 'mopkp','grupss','id','grup'));
+		// print_r($allsplit);
+		// print_r($mopsplit);
+		// print_r($splitperegon);
+		return view('site.online.split', compact('event', 'seting', 'people_rezult', 'mopkp', 'grupss', 'id', 'grup'));
+	}
+
+
+
+	public function showrezcom($id)
+	{
+
+		$event = DB::table('mopcompetition')->where('cid', $id)->first();
+		$peopless = DB::table('mopcompetitor')->where('cid', $id)->get();
+		$grups = DB::table('mopclass')->where('cid', $id)->get();
+		$clubs = DB::table('moporganization')->where('cid', $id)->get();
+
+		foreach ($grups as $grup) {
+			$grup->best = $peopless->where('cls', $grup->id)->where('cls', $grup->id)->where('stat', 1)->min('rt');
+		}
+		foreach ($peopless as $people) {
+			if ($people->stat == 1) {
+				$bestrt = $grups->where('id', $people->cls)->first->best;
+				$bali = 100 * ($bestrt->best / $people->rt);
+				$people->bali = $bali;
+				$people->best = $bestrt->best;
+				$people->mistse = SiteOnlineController::mistse($people, $peopless);
+				$people->cls_name = SiteOnlineController::grupsearh($grups, $people);
+			}
+		}
+		foreach ($clubs as $club) {
+			$x = 0;
+			$people = $peopless->where('org', $club->id)->sortByDesc('bali')->take(10);
+			foreach ($people as $p) {
+
+				$x = $p->bali + $x;
+			}
+			$club->sumball = $x;
+		}
+		$clubs = $clubs->sortByDesc('sumball');
+		$peopless = $peopless->sortByDesc('bali');
+		print_r($peopless);
+
+
+
+		return view('site.rezult.com', compact('peopless', 'clubs'));
 	}
 }

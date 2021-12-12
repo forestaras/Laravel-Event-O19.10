@@ -71,7 +71,7 @@
               <li class="drop-down"><a  href="/admin">Панель керування</a>
                 <ul>
                   <!-- <li><a href="/admin/users/profile">Створити змагання</a></li> -->
-                  <li><a href="/admin/event19">Створити змагання </a></li>
+                  <li><a href="/admin/online">Створити подію онлайн </a></li>
                   <!-- <li><a href="#">Створити олайн результати</a></li> -->
                 </ul>
               </li> 
