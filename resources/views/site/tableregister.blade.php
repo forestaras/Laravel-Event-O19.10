@@ -27,12 +27,12 @@
         <td>
           <!-- To make sure we have read access, wee need to validate the privilege -->
           @if(CRUDBooster::isUpdate() && $button_edit)
-          <a class='btn btn-success btn-sm' href='{{CRUDBooster::mainpath("edit/$register->id")}}'>Edit</a>
-          <a class='btn btn-success btn-sm' href='?editid={{$register->id}}&registerid={{$registerseting->id}}'>Edit</a>
+          {{-- <a class='btn btn-success btn-sm' href='{{CRUDBooster::mainpath("edit/$register->id")}}'>Edit</a> --}}
+          <a class='btn btn-success btn-sm' href='?editid={{$register->id}}&registerid={{$registerseting->id}}'>Редагувати</a>
           @endif
           
           @if(CRUDBooster::isDelete() && $button_edit)
-          <a class='btn btn-danger btn-sm' href='{{CRUDBooster::mainpath("delete/$register->id")}}'>Delete</a>
+          <a class='btn btn-danger btn-sm' href='{{CRUDBooster::mainpath("delete/$register->id")}}'>Видалити</a>
           @endif
         </td>
        </tr>
